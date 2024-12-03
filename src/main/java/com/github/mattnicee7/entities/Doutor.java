@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ import java.util.List;
 @Table(name = "tb_doutor")
 @AllArgsConstructor
 @Getter
+@Setter
 @NoArgsConstructor
 public class Doutor {
 

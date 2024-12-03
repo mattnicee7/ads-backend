@@ -1,15 +1,15 @@
 package com.github.mattnicee7.entities;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name = "tb_especializacao")
 @AllArgsConstructor
 @NoArgsConstructor
+@Setter
 @Getter
+@ToString
 public class Especializacao {
 
     @Id

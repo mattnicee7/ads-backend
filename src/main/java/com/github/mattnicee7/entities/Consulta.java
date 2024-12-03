@@ -1,5 +1,6 @@
 package com.github.mattnicee7.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import lombok.Setter;
 @Table(name = "tb_consulta")
 @AllArgsConstructor
 @Getter
+@Setter
 @NoArgsConstructor
 public class Consulta {
 
@@ -23,6 +25,7 @@ public class Consulta {
 
     @ManyToOne
     @JoinColumn(name = "paciente_id", nullable = false)
+    @JsonIgnore
     private Paciente paciente;
 
     @OneToOne(mappedBy = "consulta", cascade = CascadeType.ALL)

@@ -1,7 +1,11 @@
 package com.github.mattnicee7.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -9,6 +13,9 @@ import java.util.List;
 @Entity
 @Table(name = "tb_paciente")
 @NoArgsConstructor
+@Setter
+@Getter
+@AllArgsConstructor
 public class Paciente {
 
     @Id
@@ -20,6 +27,7 @@ public class Paciente {
     private String cpf;
 
     @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Consulta> consultas = new ArrayList<>();
 
     public Paciente(Long id, String nome, String cpf) {
@@ -31,5 +39,6 @@ public class Paciente {
     public void addConsulta(Consulta consulta) {
         this.consultas.add(consulta);
     }
+
 }
 
