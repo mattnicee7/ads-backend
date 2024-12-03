@@ -1,7 +1,9 @@
 package com.github.mattnicee7.controller;
 
 import com.github.mattnicee7.entities.Paciente;
+import com.github.mattnicee7.exception.CpfInvalidoException;
 import com.github.mattnicee7.service.PacienteService;
+import com.github.mattnicee7.util.CpfChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -30,6 +32,9 @@ public class PacienteController {
 
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<Paciente> getByCpf(@PathVariable String cpf) {
+        if (!CpfChecker.check(cpf))
+            throw new CpfInvalidoException("Cpf inválido");
+
         return pacienteService.findByCpf(cpf)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -37,6 +42,9 @@ public class PacienteController {
 
     @PostMapping
     public ResponseEntity<Paciente> create(@RequestBody Paciente paciente) {
+        if (!(CpfChecker.check(paciente.getCpf())))
+            throw new CpfInvalidoException("Cpf inválido");
+
         Paciente savedPaciente = pacienteService.save(paciente);
         return ResponseEntity.ok(savedPaciente);
     }
