@@ -2,20 +2,17 @@ package com.github.mattnicee7.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "tb_paciente")
-@NoArgsConstructor
-@Setter
-@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 public class Paciente {
 
     @Id
@@ -26,7 +23,7 @@ public class Paciente {
 
     private String cpf;
 
-    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "paciente", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Consulta> consultas = new ArrayList<>();
 
@@ -37,8 +34,16 @@ public class Paciente {
     }
 
     public void addConsulta(Consulta consulta) {
-        this.consultas.add(consulta);
+        if (!consultas.contains(consulta)) {
+            consultas.add(consulta);
+            consulta.setPaciente(this);
+        }
     }
 
+    public void removeConsulta(Consulta consulta) {
+        if (consultas.contains(consulta)) {
+            consultas.remove(consulta);
+            consulta.setPaciente(null);
+        }
+    }
 }
-

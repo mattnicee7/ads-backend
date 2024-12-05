@@ -19,8 +19,7 @@ public class PacienteController {
 
     @GetMapping
     public ResponseEntity<List<Paciente>> getAll() {
-        List<Paciente> pacientes = pacienteService.findAll();
-        return ResponseEntity.ok(pacientes);
+        return ResponseEntity.ok(pacienteService.findAll());
     }
 
     @GetMapping("/id/{id}")
@@ -33,7 +32,7 @@ public class PacienteController {
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<Paciente> getByCpf(@PathVariable String cpf) {
         if (!CpfChecker.check(cpf))
-            throw new CpfInvalidoException("Cpf inválido");
+            throw new CpfInvalidoException("CPF inválido");
 
         return pacienteService.findByCpf(cpf)
                 .map(ResponseEntity::ok)
@@ -42,31 +41,30 @@ public class PacienteController {
 
     @PostMapping
     public ResponseEntity<Paciente> create(@RequestBody Paciente paciente) {
-        if (!(CpfChecker.check(paciente.getCpf())))
-            throw new CpfInvalidoException("Cpf inválido");
+        if (!CpfChecker.check(paciente.getCpf()))
+            throw new CpfInvalidoException("CPF inválido");
 
         Paciente savedPaciente = pacienteService.save(paciente);
         return ResponseEntity.ok(savedPaciente);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/id/{id}")
     public ResponseEntity<Paciente> update(@PathVariable Long id, @RequestBody Paciente paciente) {
-        try {
-            Paciente updatedPaciente = pacienteService.update(id, paciente);
-            return ResponseEntity.ok(updatedPaciente);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        if (!CpfChecker.check(paciente.getCpf()))
+            throw new CpfInvalidoException("CPF inválido");
+
+        return pacienteService.update(id, paciente)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/id/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id) {
-        try {
-            pacienteService.deleteById(id);
-            return ResponseEntity.ok("Deletado com sucesso");
-        } catch (RuntimeException e) {
+        if (pacienteService.findById(id).isEmpty())
             return ResponseEntity.notFound().build();
-        }
-    }
-}
 
+        pacienteService.deleteById(id);
+        return ResponseEntity.ok("Paciente com ID " + id + " deletado com sucesso.");
+    }
+
+}

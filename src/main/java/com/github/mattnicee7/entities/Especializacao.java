@@ -7,8 +7,8 @@ import lombok.*;
 @Table(name = "tb_especializacao")
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
 @Getter
+@Setter
 @ToString
 public class Especializacao {
 
@@ -17,5 +17,5 @@ public class Especializacao {
     private Long id;
 
     private String especializacao;
-}
 
+}

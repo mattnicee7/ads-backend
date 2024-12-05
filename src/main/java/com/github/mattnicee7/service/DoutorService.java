@@ -2,14 +2,13 @@ package com.github.mattnicee7.service;
 
 import com.github.mattnicee7.entities.Doutor;
 import com.github.mattnicee7.entities.Especializacao;
+import com.github.mattnicee7.exception.ObjectNotFoundException;
 import com.github.mattnicee7.repository.DoutorRepository;
-import com.github.mattnicee7.repository.EspecializacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class DoutorService {
@@ -28,29 +27,34 @@ public class DoutorService {
         return doutorRepository.findById(id);
     }
 
+    public Optional<Doutor> findByCpf(String cpf) {
+        return doutorRepository.findByCpf(cpf);
+    }
+
     public Doutor save(Doutor doutor) {
-        List<Especializacao> especializacoes = doutor.getEspecializacoes().stream().map(
-                e -> especializacaoService.findById(e.getId()).get()
-                ).toList();
-
+        List<Especializacao> especializacoes = doutor.getEspecializacoes().stream()
+                .map(e -> especializacaoService.findById(e.getId())
+                        .orElseThrow(() -> new ObjectNotFoundException("Especialização com ID " + e.getId() + " não encontrada.")))
+                .toList();
         doutor.setEspecializacoes(especializacoes);
-
         return doutorRepository.save(doutor);
     }
 
-    public Doutor update(Long id, Doutor doutor) {
-        if (doutorRepository.existsById(id)) {
+    public boolean existsByCpf(String cpf) {
+        return doutorRepository.existsByCpf(cpf);
+    }
+
+    public Optional<Doutor> update(Long id, Doutor doutor) {
+        return doutorRepository.findById(id).map(existingDoutor -> {
             doutor.setId(id);
             return doutorRepository.save(doutor);
-        }
-        throw new RuntimeException("Doutor não encontrado.");
+        });
     }
 
     public void deleteById(Long id) {
-        if (doutorRepository.existsById(id)) {
+        doutorRepository.findById(id).map(doutor -> {
             doutorRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Doutor não encontrado.");
-        }
+            return true;
+        });
     }
 }

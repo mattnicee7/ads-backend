@@ -9,9 +9,9 @@ import java.util.regex.Pattern;
 @UtilityClass
 public class CpfChecker {
 
-    /* Pattern: 12345678901 */
+    // https://github.com/mattnicee7/MattLib/blob/master/misc/src/main/java/com/github/mattnicee7/mattlib/document/impl/CPFChecker.java
+
     private static final Pattern ONLY_NUMBERS_PATTERN = Pattern.compile("(\\d{11})");
-    /* Pattern: 123.456.789-01 */
     private static final Pattern SEPARATE_NUMBERS_PATTERN = Pattern.compile("(\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2})");
 
     public boolean check(String string) {

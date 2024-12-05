@@ -1,66 +1,57 @@
 package com.github.mattnicee7.config;
 
 import com.github.mattnicee7.entities.*;
-import com.github.mattnicee7.repository.*;
+import com.github.mattnicee7.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @Profile("test")
 public class TestConfig implements CommandLineRunner {
 
     @Autowired
-    private DoutorRepository doutorRepository;
+    private DoutorService doutorService;
 
     @Autowired
-    private PacienteRepository pacienteRepository;
+    private PacienteService pacienteService;
 
     @Autowired
-    private ConsultaRepository consultaRepository;
+    private ConsultaService consultaService;
 
     @Autowired
-    private EspecializacaoRepository especializacaoRepository;
+    private EspecializacaoService especializacaoService;
 
     @Autowired
-    private ResultadoConsultaRepository resultadoConsultaRepository;
+    private ResultadoConsultaService resultadoConsultaService;
 
     @Override
-    public void run(String... args) throws Exception {
-        Especializacao especializacao1 = new Especializacao(null, "Coração");
-        Especializacao especializacao2 = new Especializacao(null, "Dente");
-        Especializacao especializacao3 = new Especializacao(null, "Fígado");
+    public void run(String... args) {
+        Especializacao especializacao1 = especializacaoService.save(new Especializacao(null, "Coração"));
+        Especializacao especializacao2 = especializacaoService.save(new Especializacao(null, "Dente"));
+        Especializacao especializacao3 = especializacaoService.save(new Especializacao(null, "Fígado"));
 
-        especializacaoRepository.saveAll(Arrays.asList(especializacao1, especializacao2, especializacao3));
+        Doutor doutor1 = doutorService.save(new Doutor(null, "Matheus", "89132849031", List.of(especializacao1)));
+        Doutor doutor2 = doutorService.save(new Doutor(null, "Ana", "19374912831", List.of(especializacao2, especializacao3)));
 
-        Doutor doutor1 = new Doutor(null, "Matheus", Arrays.asList(especializacao1));
-        Doutor doutor2 = new Doutor(null, "Ana", Arrays.asList(especializacao2, especializacao3));
+        Paciente paciente1 = pacienteService.save(new Paciente(null, "Fernando", "13750283910"));
+        Paciente paciente2 = pacienteService.save(new Paciente(null, "Carlos", "27301938405"));
 
-        doutorRepository.saveAll(Arrays.asList(doutor1, doutor2));
+        Consulta consulta1 = consultaService.save(new Consulta(null, doutor1, paciente1, "dor de barriga", null));
+        Consulta consulta2 = consultaService.save(new Consulta(null, doutor2, paciente2, "dor no rim", null));
 
-        Paciente paciente1 = new Paciente(null, "Fernando", "13750283910");
-        Paciente paciente2 = new Paciente(null, "Carlos", "27301938405");
+        ResultadoConsulta resultado1 = resultadoConsultaService.save(
+                new ResultadoConsulta(null, consulta1, "Dorflex", "Tome a cada 8h"));
+        ResultadoConsulta resultado2 = resultadoConsultaService.save(
+                new ResultadoConsulta(null, consulta2, "Vitamina D", "Tome todo dia pela manhã"));
 
-        pacienteRepository.saveAll(Arrays.asList(paciente1, paciente2));
+        consulta1.setResultadoConsulta(resultado1);
+        consulta2.setResultadoConsulta(resultado2);
 
-        Consulta consulta1 = new Consulta(null, doutor1, paciente1, null);
-        Consulta consulta2 = new Consulta(null, doutor2, paciente2, null);
-
-        consultaRepository.saveAll(Arrays.asList(consulta1, consulta2));
-
-        ResultadoConsulta resultadoConsulta1 = new ResultadoConsulta(null, consulta1, "Dorflex", "Tome a cada 8h");
-        ResultadoConsulta resultadoConsulta2 = new ResultadoConsulta(null, consulta2, "Vitamina D", "Tome todo dia pela manhã");
-
-        resultadoConsultaRepository.saveAll(Arrays.asList(resultadoConsulta1, resultadoConsulta2));
-
-        consulta1.setResultadoConsulta(resultadoConsulta1);
-        consulta2.setResultadoConsulta(resultadoConsulta2);
-
-        consultaRepository.saveAll(Arrays.asList(consulta1, consulta2));
+        consultaService.save(consulta1);
+        consultaService.save(consulta2);
     }
-
-
 }

@@ -22,28 +22,26 @@ public class EspecializacaoService {
         return especializacaoRepository.findById(id);
     }
 
-    public Especializacao save(Especializacao especializacao) {
-        // evita criar duplicado com o mesmo nome.
-        if (especializacaoRepository.existsByEspecializacao(especializacao.getEspecializacao()))
-            return especializacaoRepository.findByEspecializacao(especializacao.getEspecializacao()).get();
-
-        return especializacaoRepository.save(especializacao);
+    public Optional<Especializacao> findByEspecializacao(String especializacao) {
+        return especializacaoRepository.findByEspecializacao(especializacao);
     }
 
-    public Especializacao update(Long id, Especializacao especializacao) {
-        if (especializacaoRepository.existsById(id)) {
+    public Especializacao save(Especializacao especializacao) {
+        return especializacaoRepository.findByEspecializacao(especializacao.getEspecializacao())
+                .orElseGet(() -> especializacaoRepository.save(especializacao));
+    }
+
+    public Optional<Especializacao> update(Long id, Especializacao especializacao) {
+        return especializacaoRepository.findById(id).map(existing -> {
             especializacao.setId(id);
             return especializacaoRepository.save(especializacao);
-        }
-        throw new RuntimeException("Especialização não encontrada.");
+        });
     }
 
     public void deleteById(Long id) {
-        if (especializacaoRepository.existsById(id)) {
+        especializacaoRepository.findById(id).map(especializacao -> {
             especializacaoRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Especialização não encontrada.");
-        }
+            return true;
+        });
     }
 }
-

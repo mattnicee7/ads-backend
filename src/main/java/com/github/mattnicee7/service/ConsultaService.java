@@ -1,7 +1,12 @@
 package com.github.mattnicee7.service;
 
 import com.github.mattnicee7.entities.Consulta;
+import com.github.mattnicee7.entities.Doutor;
+import com.github.mattnicee7.entities.Paciente;
+import com.github.mattnicee7.exception.ObjectNotFoundException;
 import com.github.mattnicee7.repository.ConsultaRepository;
+import com.github.mattnicee7.repository.DoutorRepository;
+import com.github.mattnicee7.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +19,12 @@ public class ConsultaService {
     @Autowired
     private ConsultaRepository consultaRepository;
 
+    @Autowired
+    private DoutorRepository doutorRepository;
+
+    @Autowired
+    private PacienteRepository pacienteRepository;
+
     public List<Consulta> findAll() {
         return consultaRepository.findAll();
     }
@@ -23,25 +34,48 @@ public class ConsultaService {
     }
 
     public Consulta save(Consulta consulta) {
+        if (consulta.getPaciente() != null) {
+            consulta.getPaciente().addConsulta(consulta);
+        }
         return consultaRepository.save(consulta);
     }
 
+
+    public Consulta save(Long doutorId, Long pacienteId, String sintoma) {
+        Doutor doutor = doutorRepository.findById(doutorId)
+                .orElseThrow(() -> new RuntimeException("Doutor não encontrado com ID: " + doutorId));
+
+        Paciente paciente = pacienteRepository.findById(pacienteId)
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado com ID: " + pacienteId));
+
+        Consulta consulta = new Consulta();
+        consulta.setDoutor(doutor);
+        consulta.setPaciente(paciente);
+        consulta.setSintoma(sintoma);
+
+        paciente.addConsulta(consulta);
+
+        return consultaRepository.save(consulta);
+    }
+
+
     public Consulta update(Long id, Consulta consulta) {
-        if (consultaRepository.existsById(id)) {
-            consulta.setId(id);
-            return consultaRepository.save(consulta);
+        if (!consultaRepository.existsById(id)) {
+            throw new ObjectNotFoundException("Consulta com ID " + id + " não encontrada.");
         }
-        //
-        throw new RuntimeException("Consulta não encontrada.");
+        consulta.setId(id);
+        return consultaRepository.save(consulta);
     }
 
     public void deleteById(Long id) {
-        if (consultaRepository.existsById(id)) {
-            consultaRepository.deleteById(id);
-        } else {
-            //
-            throw new RuntimeException("Consulta não encontrada.");
-        }
-    }
-}
+        Consulta consulta = consultaRepository.findById(id)
+                .orElseThrow(() -> new ObjectNotFoundException("Consulta com ID " + id + " não encontrada."));
 
+        if (consulta.getPaciente() != null) {
+            consulta.getPaciente().removeConsulta(consulta);
+        }
+
+        consultaRepository.deleteById(id);
+    }
+
+}

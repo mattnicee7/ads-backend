@@ -27,25 +27,21 @@ public class PacienteService {
     }
 
     public Paciente save(Paciente paciente) {
-        if (pacienteRepository.existsByCpf(paciente.getCpf()))
-            return pacienteRepository.findByCpf(paciente.getCpf()).get();
-        return pacienteRepository.save(paciente);
+        return pacienteRepository.findByCpf(paciente.getCpf())
+                .orElseGet(() -> pacienteRepository.save(paciente));
     }
 
-    public Paciente update(Long id, Paciente paciente) {
-        if (pacienteRepository.existsById(id)) {
+    public Optional<Paciente> update(Long id, Paciente paciente) {
+        return pacienteRepository.findById(id).map(existingPaciente -> {
             paciente.setId(id);
             return pacienteRepository.save(paciente);
-        }
-        throw new RuntimeException("Paciente não encontrado.");
+        });
     }
 
     public void deleteById(Long id) {
-        if (pacienteRepository.existsById(id)) {
+        pacienteRepository.findById(id).map(paciente -> {
             pacienteRepository.deleteById(id);
-        } else {
-            throw new RuntimeException("Paciente não encontrado.");
-        }
+            return true;
+        });
     }
 }
-

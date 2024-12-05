@@ -11,9 +11,9 @@ import java.util.List;
 @Entity
 @Table(name = "tb_doutor")
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
 public class Doutor {
 
     @Id
@@ -21,6 +21,8 @@ public class Doutor {
     private Long id;
 
     private String nome;
+
+    private String cpf;
 
     @ManyToMany
     @JoinTable(
@@ -31,4 +33,3 @@ public class Doutor {
     private List<Especializacao> especializacoes;
 
 }
-
