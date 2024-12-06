@@ -1,5 +1,6 @@
 package com.github.mattnicee7.service;
 
+import com.github.mattnicee7.dto.ConsultaRequestDTO;
 import com.github.mattnicee7.entities.Consulta;
 import com.github.mattnicee7.entities.Doutor;
 import com.github.mattnicee7.entities.Paciente;
@@ -41,17 +42,17 @@ public class ConsultaService {
     }
 
 
-    public Consulta save(Long doutorId, Long pacienteId, String sintoma) {
-        Doutor doutor = doutorRepository.findById(doutorId)
-                .orElseThrow(() -> new RuntimeException("Doutor não encontrado com ID: " + doutorId));
+    public Consulta save(ConsultaRequestDTO consultaRequestDTO) {
+        Doutor doutor = doutorRepository.findById(consultaRequestDTO.getDoutorId())
+                .orElseThrow(() -> new RuntimeException("Doutor não encontrado com ID: " + consultaRequestDTO.getDoutorId()));
 
-        Paciente paciente = pacienteRepository.findById(pacienteId)
-                .orElseThrow(() -> new RuntimeException("Paciente não encontrado com ID: " + pacienteId));
+        Paciente paciente = pacienteRepository.findById(consultaRequestDTO.getPacienteId())
+                .orElseThrow(() -> new RuntimeException("Paciente não encontrado com ID: " + consultaRequestDTO.getPacienteId()));
 
         Consulta consulta = new Consulta();
         consulta.setDoutor(doutor);
         consulta.setPaciente(paciente);
-        consulta.setSintoma(sintoma);
+        consulta.setSintoma(consultaRequestDTO.getSintoma());
 
         paciente.addConsulta(consulta);
 

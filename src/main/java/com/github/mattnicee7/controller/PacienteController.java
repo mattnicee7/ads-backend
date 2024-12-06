@@ -31,9 +31,6 @@ public class PacienteController {
 
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<Paciente> getByCpf(@PathVariable String cpf) {
-        if (!CpfChecker.check(cpf))
-            throw new CpfInvalidoException("CPF inválido");
-
         return pacienteService.findByCpf(cpf)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -41,18 +38,12 @@ public class PacienteController {
 
     @PostMapping
     public ResponseEntity<Paciente> create(@RequestBody Paciente paciente) {
-        if (!CpfChecker.check(paciente.getCpf()))
-            throw new CpfInvalidoException("CPF inválido");
-
         Paciente savedPaciente = pacienteService.save(paciente);
         return ResponseEntity.ok(savedPaciente);
     }
 
     @PutMapping("/id/{id}")
     public ResponseEntity<Paciente> update(@PathVariable Long id, @RequestBody Paciente paciente) {
-        if (!CpfChecker.check(paciente.getCpf()))
-            throw new CpfInvalidoException("CPF inválido");
-
         return pacienteService.update(id, paciente)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());

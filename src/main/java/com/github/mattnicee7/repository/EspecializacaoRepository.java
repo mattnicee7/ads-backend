@@ -10,4 +10,5 @@ public interface EspecializacaoRepository extends JpaRepository<Especializacao, 
     Optional<Especializacao> findByEspecializacao(String especializacao);
 
     boolean existsByEspecializacao(String especializacao);
+
 }

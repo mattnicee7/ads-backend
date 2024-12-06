@@ -39,11 +39,7 @@ public class ConsultaController {
 
     @PostMapping
     public ResponseEntity<Consulta> create(@RequestBody ConsultaRequestDTO consultaRequestDTO) {
-        Consulta savedConsulta = consultaService.save(
-                consultaRequestDTO.getDoutorId(),
-                consultaRequestDTO.getPacienteId(),
-                consultaRequestDTO.getSintoma()
-        );
+        Consulta savedConsulta = consultaService.save(consultaRequestDTO);
         return ResponseEntity.ok(savedConsulta);
     }
 

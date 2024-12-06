@@ -34,11 +34,11 @@ public class TestConfig implements CommandLineRunner {
         Especializacao especializacao2 = especializacaoService.save(new Especializacao(null, "Dente"));
         Especializacao especializacao3 = especializacaoService.save(new Especializacao(null, "Fígado"));
 
-        Doutor doutor1 = doutorService.save(new Doutor(null, "Matheus", "89132849031", List.of(especializacao1)));
-        Doutor doutor2 = doutorService.save(new Doutor(null, "Ana", "19374912831", List.of(especializacao2, especializacao3)));
+        Doutor doutor1 = doutorService.save(new Doutor(null, "Matheus", "93270775040", List.of(especializacao1)));
+        Doutor doutor2 = doutorService.save(new Doutor(null, "Ana", "80017956080", List.of(especializacao2, especializacao3)));
 
-        Paciente paciente1 = pacienteService.save(new Paciente(null, "Fernando", "13750283910"));
-        Paciente paciente2 = pacienteService.save(new Paciente(null, "Carlos", "27301938405"));
+        Paciente paciente1 = pacienteService.save(new Paciente(null, "Fernando", "14673854098"));
+        Paciente paciente2 = pacienteService.save(new Paciente(null, "Carlos", "25359775084"));
 
         Consulta consulta1 = consultaService.save(new Consulta(null, doutor1, paciente1, "dor de barriga", null));
         Consulta consulta2 = consultaService.save(new Consulta(null, doutor2, paciente2, "dor no rim", null));

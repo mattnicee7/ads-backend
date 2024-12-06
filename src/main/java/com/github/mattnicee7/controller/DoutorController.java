@@ -34,9 +34,6 @@ public class DoutorController {
 
     @GetMapping("/cpf/{cpf}")
     public ResponseEntity<Doutor> getByCpf(@PathVariable String cpf) {
-        if (!CpfChecker.check(cpf))
-            throw new CpfInvalidoException("CPF inválido");
-
         return doutorService.findByCpf(cpf)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ObjectNotFoundException("Doutor com CPF " + cpf + " não encontrado."));
@@ -44,9 +41,6 @@ public class DoutorController {
 
     @PostMapping
     public ResponseEntity<Doutor> create(@RequestBody Doutor doutor) {
-        if (!CpfChecker.check(doutor.getCpf()))
-            throw new CpfInvalidoException("CPF inválido");
-
         return doutorService.findByCpf(doutor.getCpf())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.ok(doutorService.save(doutor)));
@@ -54,9 +48,6 @@ public class DoutorController {
 
     @PutMapping("/id/{id}")
     public ResponseEntity<Doutor> update(@PathVariable Long id, @RequestBody Doutor doutor) {
-        if (!CpfChecker.check(doutor.getCpf()))
-            throw new CpfInvalidoException("CPF inválido");
-
         return doutorService.update(id, doutor)
                 .map(ResponseEntity::ok)
                 .orElseThrow(() -> new ObjectNotFoundException("Doutor com ID " + id + " não encontrado."));
@@ -72,7 +63,8 @@ public class DoutorController {
             return ResponseEntity.ok("Doutor com ID " + id + " deletado com sucesso.");
         } catch (DataIntegrityViolationException e) {
             throw new InvalidOperationException(
-                    "Doutor com ID " + id + " não pode ser deletado, pois está associado a uma ou mais consultas.");
+                    "Doutor com ID " + id + " não pode ser deletado, pois está associado a uma ou mais consultas."
+            );
         }
 
     }
